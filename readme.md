@@ -29,3 +29,14 @@
 另外还看了一篇关于GNN做link prediction和 Entity classification，但是看完了不是很明白，感觉还要多读一下。里面关于GCN是消息传播的一种形式的讨论以及选取合适的参数共享方式防止过拟合的方法我认为还是很值得学习的。
 先做个flag以后补
 #### Modeling Relational Data with Graph Convolutional Networks
+咕咕
+
+---
+2020/3/23
+#### Graph Neural Networks with Generated Parameters for Relation Extraction
+
+感觉很棒！这篇文章和Context-Aware RE的那篇文章出发点类似，都是考虑当一个句子中存在多个实体以及实体间关系(multi-hop relation)的情况。但是Context-Aware LSTM判别multi-hop relation的方法是基于attention mechanism，因此其它所有实体都会对当前判别的实体间关系产生影响，难免会产生噪声。而GCN每一次迭代只受相邻节点的影响则能缓解这一点(这个结论是作者对实验结果的一些解释，不过作者用了may的意思应该也是不太确定)。该文章的另一个创新点在于提出了可变参数的边/邻接矩阵，可以不用预先定义句子中图的结构直接在非结构化句子中进行多实体关系的抽取。最后该文章用实验说明了GP-GNN在全监督/远监督数据集上的优越效果以及在多跳推理机制上的优点。
+
+GP-GNN网络的设计也具有范式意义，个人认为GCN的设计关键在于三点：怎么设计合适的图卷积核，怎么合理的根据任务初始化节点以及得到节点表示之后怎么利用他们做分类；在这篇文章中它把整个网络分为编码、迭代以及判别模块。每一个模块都解决了上述的一个问题，编码模块通过双向lSTM和MLP根据两个实体间的词生成可变参数的边，其中双向LSTM的输入是word+pos embedding，迭代模块利用编码模块生成的邻接矩阵做graph convolution,人工将关系三元组中的subject和object加入节点中做节点初始化，最后判别模块使用迭代后生成的图节点特征进行关系的实体关系的判别。
+
+但是这篇文章还有些地方没有明白，准备问一下nlp的老师，首先文中提到了编码部分的参数每一层都不一样，意思是每一层用不同的MLE(LSTM\[\.\])生成表示吗？另外是关于图的构建，个人推测是根据标注的entity来构建，并不是一个complete graph，因为没有代码不知道具体实现是怎样的，还需要问一下。
